@@ -22,7 +22,7 @@ class SimpleBufferTest {
     }
 
     private SimpleBuffer createBufferWithSize(int maxSize) {
-        return new SleepSynchronizationSimpleBuffer(maxSize);
+        return new LockSimpleBuffer(maxSize);
     }
 
     @Test

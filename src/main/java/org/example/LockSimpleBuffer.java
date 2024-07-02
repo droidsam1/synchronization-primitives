@@ -2,13 +2,15 @@ package org.example;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.locks.ReentrantLock;
 
-public class SleepSynchronizationSimpleBuffer implements SimpleBuffer {
+public class LockSimpleBuffer implements SimpleBuffer {
 
     private final int maxSize;
     private final Queue<Object> elements;
+    private final ReentrantLock lock = new ReentrantLock();
 
-    public SleepSynchronizationSimpleBuffer(int size) {
+    public LockSimpleBuffer(int size) {
         this.maxSize = size;
         this.elements = new ArrayDeque<>();
     }
@@ -23,10 +25,13 @@ public class SleepSynchronizationSimpleBuffer implements SimpleBuffer {
 
     public void produce(Object element) {
         while (elements.size() >= maxSize) {
-            artificialDelayOf(100);
+            artificialDelayOf(1);
         }
-        synchronized (this){
+        lock.lock();
+        try {
             this.elements.add(element);
+        } finally {
+            lock.unlock();
         }
 
     }
@@ -37,10 +42,13 @@ public class SleepSynchronizationSimpleBuffer implements SimpleBuffer {
 
     public Object consume() {
         while (elements.isEmpty()) {
-            artificialDelayOf(100);
+            artificialDelayOf(1);
         }
-        synchronized (this){
+        this.lock.lock();
+        try {
             return this.elements.poll();
+        } finally {
+            this.lock.unlock();
         }
     }
 
