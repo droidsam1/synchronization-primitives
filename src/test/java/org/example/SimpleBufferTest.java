@@ -18,20 +18,24 @@ class SimpleBufferTest {
 
     @BeforeEach
     public void setUp() {
-        buffer = new SimpleBuffer(10);
+        this.buffer = createBufferWithSize(10);
+    }
+
+    private SimpleBuffer createBufferWithSize(int maxSize) {
+        return new SleepSynchronizationSimpleBuffer(maxSize);
     }
 
     @Test
     void shouldInitTheBufferWithAFixedSize() {
         int size = ThreadLocalRandom.current().nextInt(1, 100);
 
-        buffer = new SimpleBuffer(size);
+        this.buffer =  createBufferWithSize(size);
 
         assertEquals(size, buffer.getMaxSize());
     }
 
     @Test
-    void shouldAProducerBeAbleToProduce() {
+    void shouldAProducerBeAbleToProduce() throws InterruptedException {
         buffer.produce(1);
         buffer.produce(2);
         buffer.produce(3);
@@ -45,8 +49,8 @@ class SimpleBufferTest {
     }
 
     @Test
-    void shouldBufferBeFullWhenMaxSizeIsReached() {
-        buffer = new SimpleBuffer(2);
+    void shouldBufferBeFullWhenMaxSizeIsReached() throws InterruptedException {
+        this.buffer =  createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
@@ -57,12 +61,16 @@ class SimpleBufferTest {
     @Test
     void shouldAConsumerWaitToProduceIfBufferIsFull() throws InterruptedException {
 
-        buffer = new SimpleBuffer(2);
+        this.buffer =  createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
         Thread producerThread = new Thread(() -> {
-            buffer.produce(3);
+            try {
+                buffer.produce(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         producerThread.start();
@@ -72,7 +80,7 @@ class SimpleBufferTest {
     }
 
     @Test
-    void shouldConsumersBeAbleToConsume() {
+    void shouldConsumersBeAbleToConsume() throws InterruptedException {
         buffer.produce(1);
         buffer.produce(2);
         buffer.consume();
@@ -83,7 +91,11 @@ class SimpleBufferTest {
     @Test
     void shouldConsumersWaitIfBufferIsEmpty() throws InterruptedException {
         Thread consumerThread = new Thread(() -> {
-            buffer.consume();
+            try {
+                buffer.consume();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         consumerThread.start();
@@ -98,12 +110,16 @@ class SimpleBufferTest {
 
     @Test
     void shouldAProducerWaitingProceedWhenBufferHasSpaceAgain() throws InterruptedException {
-        buffer = new SimpleBuffer(2);
+        this.buffer =  createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
         Thread producerThread = new Thread(() -> {
-            buffer.produce(3);
+            try {
+                buffer.produce(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         producerThread.start();
@@ -118,7 +134,11 @@ class SimpleBufferTest {
     @Test
     void shouldAConsumerWaitingProceedWhenBufferHasElementsAgain() throws InterruptedException {
         Thread consumerThread = new Thread(() -> {
-            buffer.consume();
+            try {
+                buffer.consume();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
 
         consumerThread.start();
@@ -132,11 +152,29 @@ class SimpleBufferTest {
 
     @Test
     void concurrentProducersShouldNeverProduceMoreThanMaxSize() throws InterruptedException {
-        buffer = new SimpleBuffer(1);
+        this.buffer =  createBufferWithSize(1);
         for (int i = 0; i < 1_000_000; i++) {
-            CompletableFuture.runAsync(() -> buffer.produce(1));
-            CompletableFuture.runAsync(() -> buffer.consume());
-            CompletableFuture.runAsync(() -> buffer.produce(1));
+            CompletableFuture.runAsync(() -> {
+                try {
+                    buffer.produce(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            CompletableFuture.runAsync(() -> {
+                try {
+                    buffer.consume();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            CompletableFuture.runAsync(() -> {
+                try {
+                    buffer.produce(1);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         }
         giveTimeToThreadToProceed();
         giveTimeToThreadToProceed();
