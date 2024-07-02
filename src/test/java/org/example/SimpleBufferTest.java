@@ -22,14 +22,14 @@ class SimpleBufferTest {
     }
 
     private SimpleBuffer createBufferWithSize(int maxSize) {
-        return new LockSimpleBuffer(maxSize);
+        return new MonitorSynchronizationSimpleBuffer(maxSize);
     }
 
     @Test
     void shouldInitTheBufferWithAFixedSize() {
         int size = ThreadLocalRandom.current().nextInt(1, 100);
 
-        this.buffer =  createBufferWithSize(size);
+        this.buffer = createBufferWithSize(size);
 
         assertEquals(size, buffer.getMaxSize());
     }
@@ -50,7 +50,7 @@ class SimpleBufferTest {
 
     @Test
     void shouldBufferBeFullWhenMaxSizeIsReached() throws InterruptedException {
-        this.buffer =  createBufferWithSize(2);
+        this.buffer = createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
@@ -61,7 +61,7 @@ class SimpleBufferTest {
     @Test
     void shouldAConsumerWaitToProduceIfBufferIsFull() throws InterruptedException {
 
-        this.buffer =  createBufferWithSize(2);
+        this.buffer = createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
@@ -105,12 +105,13 @@ class SimpleBufferTest {
     }
 
     private static boolean isWaiting(Thread consumerThread) {
+        System.out.println(consumerThread.getState());
         return consumerThread.getState() == State.TIMED_WAITING || consumerThread.getState() == State.WAITING;
     }
 
     @Test
     void shouldAProducerWaitingProceedWhenBufferHasSpaceAgain() throws InterruptedException {
-        this.buffer =  createBufferWithSize(2);
+        this.buffer = createBufferWithSize(2);
         buffer.produce(1);
         buffer.produce(2);
 
@@ -124,11 +125,12 @@ class SimpleBufferTest {
 
         producerThread.start();
         giveTimeToThreadToProceed();
-        assertTrue(isWaiting(producerThread), "The producer thread should be waiting");
+                assertTrue(isWaiting(producerThread), "The producer thread should be waiting");
 
         buffer.consume();
         giveTimeToThreadToProceed();
         assertSame(State.TERMINATED, producerThread.getState());
+        assertEquals(2, buffer.getSize());
     }
 
     @Test
@@ -152,7 +154,7 @@ class SimpleBufferTest {
 
     @Test
     void concurrentProducersShouldNeverProduceMoreThanMaxSize() throws InterruptedException {
-        this.buffer =  createBufferWithSize(1);
+        this.buffer = createBufferWithSize(1);
         for (int i = 0; i < 1_000_000; i++) {
             CompletableFuture.runAsync(() -> {
                 try {
