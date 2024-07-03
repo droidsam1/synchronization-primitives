@@ -25,10 +25,7 @@ public class SleepSynchronizationSimpleBoundedBuffer implements SimpleBoundedBuf
         while (elements.size() >= maxSize) {
             artificialDelayOf(100);
         }
-        synchronized (this){
-            this.elements.add(element);
-        }
-
+        this.elements.add(element);
     }
 
     public boolean isFull() {
@@ -39,9 +36,7 @@ public class SleepSynchronizationSimpleBoundedBuffer implements SimpleBoundedBuf
         while (elements.isEmpty()) {
             artificialDelayOf(100);
         }
-        synchronized (this){
-            return this.elements.poll();
-        }
+        return this.elements.poll();
     }
 
     private static void artificialDelayOf(int millis) {
