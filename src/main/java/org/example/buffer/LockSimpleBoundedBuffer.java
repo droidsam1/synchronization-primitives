@@ -15,7 +15,7 @@ public class LockSimpleBoundedBuffer implements SimpleBoundedBuffer {
         this.elements = new ArrayDeque<>();
     }
 
-    public int getMaxSize() {
+    public int getCapacity() {
         return maxSize;
     }
 

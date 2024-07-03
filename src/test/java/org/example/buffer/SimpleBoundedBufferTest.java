@@ -31,7 +31,7 @@ class SimpleBoundedBufferTest {
 
         this.buffer = createBufferWithSize(size);
 
-        assertEquals(size, buffer.getMaxSize());
+        assertEquals(size, buffer.getCapacity());
     }
 
     @Test
@@ -105,7 +105,6 @@ class SimpleBoundedBufferTest {
     }
 
     private static boolean isWaiting(Thread consumerThread) {
-        System.out.println(consumerThread.getState());
         return consumerThread.getState() == State.TIMED_WAITING || consumerThread.getState() == State.WAITING;
     }
 
@@ -125,7 +124,7 @@ class SimpleBoundedBufferTest {
 
         producerThread.start();
         giveTimeToThreadToProceed();
-                assertTrue(isWaiting(producerThread), "The producer thread should be waiting");
+        assertTrue(isWaiting(producerThread), "The producer thread should be waiting");
 
         buffer.consume();
         giveTimeToThreadToProceed();

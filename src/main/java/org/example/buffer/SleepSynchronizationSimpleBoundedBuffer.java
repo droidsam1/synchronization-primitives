@@ -13,7 +13,7 @@ public class SleepSynchronizationSimpleBoundedBuffer implements SimpleBoundedBuf
         this.elements = new ArrayDeque<>();
     }
 
-    public int getMaxSize() {
+    public int getCapacity() {
         return maxSize;
     }
 

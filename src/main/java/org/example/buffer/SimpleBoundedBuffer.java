@@ -2,7 +2,7 @@ package org.example.buffer;
 
 public interface SimpleBoundedBuffer {
 
-    int getMaxSize();
+    int getCapacity();
 
     int getSize();
 

@@ -12,7 +12,7 @@ public class ArrayBlockingBoundedBuffer implements SimpleBoundedBuffer {
         this.elements = new ArrayBlockingQueue<>(size);
     }
 
-    public int getMaxSize() {
+    public int getCapacity() {
         return maxSize;
     }
 

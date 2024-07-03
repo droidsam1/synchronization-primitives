@@ -18,7 +18,7 @@ public class MonitorSynchronizationSimpleBoundedBuffer implements SimpleBoundedB
         this.elements = new ArrayDeque<>();
     }
 
-    public int getMaxSize() {
+    public int getCapacity() {
         return maxSize;
     }
 
