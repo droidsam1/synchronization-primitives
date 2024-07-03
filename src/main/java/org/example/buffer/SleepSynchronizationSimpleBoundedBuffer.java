@@ -1,14 +1,14 @@
-package org.example;
+package org.example.buffer;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class SleepSynchronizationSimpleBuffer implements SimpleBuffer {
+public class SleepSynchronizationSimpleBoundedBuffer implements SimpleBoundedBuffer {
 
     private final int maxSize;
     private final Queue<Object> elements;
 
-    public SleepSynchronizationSimpleBuffer(int size) {
+    public SleepSynchronizationSimpleBoundedBuffer(int size) {
         this.maxSize = size;
         this.elements = new ArrayDeque<>();
     }

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.buffer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -10,19 +10,19 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SimpleBufferTest {
+class SimpleBoundedBufferTest {
 
 
     //SUT
-    private SimpleBuffer buffer;
+    private SimpleBoundedBuffer buffer;
 
     @BeforeEach
     public void setUp() {
         this.buffer = createBufferWithSize(10);
     }
 
-    private SimpleBuffer createBufferWithSize(int maxSize) {
-        return new MonitorSynchronizationSimpleBuffer(maxSize);
+    private SimpleBoundedBuffer createBufferWithSize(int maxSize) {
+        return new MonitorSynchronizationSimpleBoundedBuffer(maxSize);
     }
 
     @Test

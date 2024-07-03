@@ -1,13 +1,13 @@
-package org.example;
+package org.example.buffer;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
-public class ArrayBlockingBuffer implements SimpleBuffer {
+public class ArrayBlockingBoundedBuffer implements SimpleBoundedBuffer {
 
     private final int maxSize;
     private final ArrayBlockingQueue<Object> elements;
 
-    public ArrayBlockingBuffer(int size) {
+    public ArrayBlockingBoundedBuffer(int size) {
         this.maxSize = size;
         this.elements = new ArrayBlockingQueue<>(size);
     }

@@ -1,11 +1,11 @@
-package org.example;
+package org.example.buffer;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class MonitorSynchronizationSimpleBuffer implements SimpleBuffer {
+public class MonitorSynchronizationSimpleBoundedBuffer implements SimpleBoundedBuffer {
 
     private final int maxSize;
     private final Queue<Object> elements;
@@ -13,7 +13,7 @@ public class MonitorSynchronizationSimpleBuffer implements SimpleBuffer {
     private final Condition notFull = lock.newCondition();
     private final Condition notEmpty = lock.newCondition();
 
-    public MonitorSynchronizationSimpleBuffer(int size) {
+    public MonitorSynchronizationSimpleBoundedBuffer(int size) {
         this.maxSize = size;
         this.elements = new ArrayDeque<>();
     }

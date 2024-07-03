@@ -1,6 +1,6 @@
-package org.example;
+package org.example.buffer;
 
-public interface SimpleBuffer {
+public interface SimpleBoundedBuffer {
 
     int getMaxSize();
 

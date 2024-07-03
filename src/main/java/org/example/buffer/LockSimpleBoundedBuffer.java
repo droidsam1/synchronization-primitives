@@ -1,16 +1,16 @@
-package org.example;
+package org.example.buffer;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LockSimpleBuffer implements SimpleBuffer {
+public class LockSimpleBoundedBuffer implements SimpleBoundedBuffer {
 
     private final int maxSize;
     private final Queue<Object> elements;
     private final ReentrantLock lock = new ReentrantLock();
 
-    public LockSimpleBuffer(int size) {
+    public LockSimpleBoundedBuffer(int size) {
         this.maxSize = size;
         this.elements = new ArrayDeque<>();
     }
